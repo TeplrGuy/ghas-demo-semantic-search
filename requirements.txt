@@ -1,0 +1,28 @@
+# Core ML dependencies
+sentence-transformers
+transformers
+torch
+
+# Web framework - old versions with known CVEs (Dependabot will flag)
+flask==2.2.2
+Werkzeug==2.2.2
+Jinja2==3.1.2
+
+# YAML parsing
+PyYAML
+
+# HTTP client - OLD version with known CVEs
+requests==2.28.0
+urllib3==1.26.5
+
+# XML parsing
+lxml
+
+# Image processing
+Pillow
+
+# Serialization & math
+numpy
+
+# Crypto
+cryptography

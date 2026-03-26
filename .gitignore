@@ -1,0 +1,8 @@
+.env
+*.pyc
+__pycache__/
+embeddings.db
+/tmp/
+*.pkl
+*.pickle
+model_cache/
