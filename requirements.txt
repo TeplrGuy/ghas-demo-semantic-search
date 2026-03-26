@@ -4,7 +4,7 @@ transformers
 torch
 
 # Web framework - old versions with known CVEs (Dependabot will flag)
-flask==2.2.2
+flask==3.1.3
 Werkzeug==2.2.2
 Jinja2==3.1.2
 
