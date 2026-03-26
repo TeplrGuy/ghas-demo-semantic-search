@@ -17,15 +17,26 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Install ModelScan
-        run: pip install modelscan
+      - name: Install ModelScan and huggingface-hub
+        run: pip install modelscan huggingface-hub
 
-      - name: Scan HuggingFace model (sentence-transformers/all-mpnet-base-v2)
+      - name: Download model files
+        run: |
+          python -c "
+          from huggingface_hub import snapshot_download
+          snapshot_download(
+              repo_id='sentence-transformers/all-mpnet-base-v2',
+              local_dir='./model',
+              ignore_patterns=['*.onnx', '*.onnx_data', 'openvino*']
+          )
+          "
+
+      - name: Scan model with ModelScan
         run: |
           echo "=== Scanning sentence-transformers/all-mpnet-base-v2 ==="
-          modelscan scan -p sentence-transformers/all-mpnet-base-v2 || true
+          modelscan scan -p ./model || true
 
-      - name: Scan with detailed output
+      - name: Detailed scan report
         run: |
           echo "=== Detailed model scan report ==="
-          modelscan scan -p sentence-transformers/all-mpnet-base-v2 --show-skipped || true
+          modelscan scan -p ./model --show-skipped || true
