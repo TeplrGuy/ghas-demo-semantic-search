@@ -1,0 +1,31 @@
+name: ModelScan - ML Model Security Scan
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  modelscan:
+    name: Scan ML Model for Security Issues
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install ModelScan
+        run: pip install modelscan
+
+      - name: Scan HuggingFace model (sentence-transformers/all-mpnet-base-v2)
+        run: |
+          echo "=== Scanning sentence-transformers/all-mpnet-base-v2 ==="
+          modelscan scan -p sentence-transformers/all-mpnet-base-v2 || true
+
+      - name: Scan with detailed output
+        run: |
+          echo "=== Detailed model scan report ==="
+          modelscan scan -p sentence-transformers/all-mpnet-base-v2 --show-skipped || true
