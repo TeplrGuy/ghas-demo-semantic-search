@@ -33,10 +33,11 @@ ghas-demo-project/
 ├── requirements.txt        # Python dependencies (pinned with known CVEs for demo)
 └── .github/
     └── workflows/
-        ├── codeql.yml              # CodeQL code scanning (GHAS)
         ├── dependency-review.yml   # Dependency review on PRs (GHAS)
         └── modelscan.yml           # ModelScan for ML model weight scanning
 ```
+
+CodeQL runs via **GHAS default setup** (configured in repo settings, not a workflow file).
 
 ### Component Overview
 
@@ -125,10 +126,11 @@ safe (no arbitrary code execution on load).
 
 ## GitHub Actions Workflows
 
-### `codeql.yml` - Code Scanning
+### CodeQL - Code Scanning (Default Setup)
 
-Runs CodeQL with the `security-extended` query suite on every push, PR, and weekly
-schedule. Results appear in the repository **Security > Code scanning alerts** tab.
+CodeQL runs via the GHAS default setup configured in the repository settings under
+**Settings > Code security > Code scanning**. This automatically scans Python source
+on every push and PR. Results appear in **Security > Code scanning alerts**.
 
 ### `dependency-review.yml` - Dependency Review
 
