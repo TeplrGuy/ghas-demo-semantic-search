@@ -5,6 +5,11 @@ on:
     branches: [main]
   pull_request:
     branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  security-events: write
 
 jobs:
   modelscan:
@@ -15,7 +20,7 @@ jobs:
 
       - uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: "3.11"
 
       - name: Install ModelScan and huggingface-hub
         run: pip install modelscan huggingface-hub
@@ -31,12 +36,49 @@ jobs:
           )
           "
 
-      - name: Scan model with ModelScan
+      - name: Scan model with ModelScan (console report)
         run: |
           echo "=== Scanning sentence-transformers/all-mpnet-base-v2 ==="
-          modelscan scan -p ./model || true
-
-      - name: Detailed scan report
-        run: |
-          echo "=== Detailed model scan report ==="
           modelscan scan -p ./model --show-skipped || true
+
+      - name: Generate SARIF report for GHAS integration
+        run: |
+          modelscan scan -p ./model -r -o sarif -f modelscan-results.sarif || true
+
+      - name: Generate JSON report
+        run: |
+          modelscan scan -p ./model -r -o json -f modelscan-results.json || true
+
+      - name: Print scan summary
+        if: always()
+        run: |
+          echo "============================================"
+          echo "  MODEL SCAN SUMMARY"
+          echo "============================================"
+          echo "Model: sentence-transformers/all-mpnet-base-v2"
+          echo "Source: https://huggingface.co/sentence-transformers/all-mpnet-base-v2"
+          echo ""
+          if [ -f modelscan-results.json ]; then
+            echo "--- JSON Results ---"
+            cat modelscan-results.json
+          fi
+          echo ""
+          echo "============================================"
+
+      - name: Upload SARIF to GitHub Security tab
+        if: always()
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: modelscan-results.sarif
+          category: modelscan
+        continue-on-error: true
+
+      - name: Upload scan artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: modelscan-reports
+          path: |
+            modelscan-results.sarif
+            modelscan-results.json
+          retention-days: 90
