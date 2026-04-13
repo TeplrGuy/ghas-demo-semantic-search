@@ -5,7 +5,7 @@ torch
 
 # Web framework - old versions with known CVEs (Dependabot will flag)
 flask==2.2.2
-Werkzeug==2.2.2
+Werkzeug==3.1.6
 Jinja2==3.1.2
 
 # YAML parsing
